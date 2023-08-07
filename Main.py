@@ -65,7 +65,7 @@ class NeatApp:
 
     def run(self):
         """
-        Method to run the NEAT algorithm and evolve the birds through successive generations.
+        Method to run the NEAT algorithm to evolve and evaluate the birds (genomes) through successive generations.
         """
 
         # Show statistics in terminal
@@ -379,11 +379,11 @@ if __name__ == '__main__':
     # Create an instance of the 'NeatApp' class with the specified configuration file path
     app = NeatApp('./config-feedforward.txt')
 
-    # Run successive generations to train and evolve 100 birds at a time, and save the winner genome in the end
+    # Run successive generations to evolve and evaluate 100 birds (genomes) at a time, and save the winner genome in the end
     app.run()
 
     # Play the game with only the winner bird
     genome_path = 'winner.pkl'
     if os.path.exists(genome_path):
-        # If the file path exists, load the winner genome, and play the game using the best bird only
+        # If the file path exists, load the winner genome, and play the game using the best genome only
         app.play_with_best_bird(genome_path)
