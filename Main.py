@@ -380,7 +380,7 @@ if __name__ == '__main__':
     app = NeatApp('./config-feedforward.txt')
 
     # Run successive generations to train and evolve 100 birds at a time, and save the winner genome in the end
-    #app.run()
+    app.run()
 
     # Play the game with only the winner bird
     genome_path = 'winner.pkl'
