@@ -379,8 +379,7 @@ if __name__ == '__main__':
     # Create an instance of the 'NeatApp' class with the specified configuration file path
     app = NeatApp('./config-feedforward.txt')
 
-    # Run successive generations to train and evolve 100 birds at a time,
-    # and save the winner genome in the end
+    # Run successive generations to train and evolve 100 birds at a time, and save the winner genome in the end
     #app.run()
 
     # Play the game with only the winner bird
