@@ -118,8 +118,8 @@ class NeatApp:
         self.init_game()
 
 
-        run = True
-        while run:
+        running = True
+        while running:
             # Set the maximum frames per second at which the game is run
             self.clock.tick(self.FRAMES_PER_SECOND)
 
@@ -168,7 +168,7 @@ class NeatApp:
             else:
                 # If all birds are extinct, break the loop.
                 # The population object "p" will recall the eval_genomes() function to run with the next generation
-                run = False
+                running = False
 
 
             # If the button "X" is clicked

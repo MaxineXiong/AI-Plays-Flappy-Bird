@@ -173,7 +173,7 @@ def test_BASE_PIPE():
     bird = BIRD(230, 350)
     base = BASE(700)
     pipes = [PIPE(700)]
-    
+
     # Create pygame window object
     win = pygame.display.set_mode((530, 780))
 
@@ -187,8 +187,8 @@ def test_BASE_PIPE():
     # Initialize the player's score to 0
     score = 0
 
-    run = True
-    while run:
+    running = True
+    while running:
         # Set the game to run at most 30 frames per second
         clock.tick(30)
         # Draw background image onto the pygame window
@@ -243,7 +243,7 @@ def test_BASE_PIPE():
         # Break the loop if button "X" is clicked
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
+                running = False
 
     # Quit the game
     pygame.quit()

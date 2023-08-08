@@ -152,8 +152,8 @@ def test_BIRD_class():
     win = pygame.display.set_mode((500, 780))
     clock = pygame.time.Clock()
 
-    run = True
-    while run:
+    running = True
+    while running:
         # Set the game to run at most 30 frames per second
         clock.tick(30)
         # Draw background image onto the pygame window
@@ -168,7 +168,7 @@ def test_BIRD_class():
         # Break the loop if button "X" is clicked
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
+                running = False
 
     # Quit the game
     pygame.quit()
