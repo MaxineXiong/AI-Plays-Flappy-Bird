@@ -12,13 +12,15 @@ The **AI Plays Flappy Bird with NEAT** project is an implementation of the **[Ne
 
 In this project, the NEAT algorithm orchestrates the **evolution** and **evaluation** of a bird population through **successive generations** until the fitness threshold is met. Each bird is controlled by a **genome (genotype)** that encapsulates critical genetic information, including the architecture, connection weights, and other parameters of a neural network. The algorithm releases this population of genetically diverse birds into the game environment to **evaluate their fitness**. A **feedforward neural network (phenotype)** is created for each bird at the beginning of the game using its genome as a blueprint. Each network then continues to process input data and generates output predictions as the associated bird progresses in the game. 
 
-The algorithm employs the **fitness score** to assess a genome's performance. When a bird successfully passes a pipe, it earns extra fitness points. As a result, higher fitness scores indicate better genome performance. During the evaluation process, birds that collide with the ceiling, floor, or pipes are promptly eliminated from the game, **as illustrated in the GIF image below**. Once all birds in a generation have been eliminated, the algorithm prunes the underperforming genomes and potentially **mutates** or **breeds** the best-performing genomes to create a new generation of evolved birds, which will also undergo the fitness evaluation within the game environment as the previous generation does.
+The algorithm employs the **fitness score** to assess a genome's performance. When a bird successfully passes a pipe, it earns extra fitness points. As a result, higher fitness scores indicate better genome performance. During the evaluation process, birds that collide with the ceiling, floor, or pipes are promptly eliminated from the game, **as illustrated in the GIF image below**. Once all birds in a generation have been eliminated, the algorithm prunes the underperforming genomes and potentially **mutates** or **breeds** the best-performing genomes to create a new generation of evolved birds, which will also undergo the fitness evaluation within the game environment as the previous generation does. 
 
 <p align="center">
   <img src="./images/demo.gif" height=580 />
 </p>
 
-The process of **evolution and evaluation** may iterate across multiple generations **until the fitness threshold is met or exceeded**. The ultimate winner genome, demonstrating exceptional gameplay, is saved as a pickle file. This file can be reloaded to relive the game, showcasing the impressive capabilities of the evolved AI.
+To gain a deeper understanding of **genetic encoding for mapping genomes (genotypes) to networks (phenotypes)**, and the evolution process of creating the next generation through **mutation and crossover of disparate neural network topologies**, I recommend exploring [**Efficient Evolution of Neural Network Topologies**](https://nn.cs.utexas.edu/downloads/papers/stanley.cec02.pdf) written by [Kenneth O. Stanley](https://scholar.google.se/citations?user=6Q6oO1MAAAAJ&hl=en). 
+
+The process of **evolution and evaluation** may iterate across multiple generations **until the fitness threshold is met or exceeded**. The ultimate **winner genome**, demonstrating exceptional gameplay, is saved as a pickle file. This file can be reloaded to relive the game, showcasing the impressive capabilities of the evolved AI.
 
 _**Press and hold the CTRL key while clicking the badge icon below to see AI playing the Flappy Bird-like game with the winner genome** (It is recommended to open the Replit IDE on a <ins>desktop monitor</ins> for better viewing experience)_:
 
@@ -29,13 +31,13 @@ _**Press and hold the CTRL key while clicking the badge icon below to see AI pla
 
 ## **Features**
 
-- Utilizes the NEAT algorithm to evolve a population of birds through successive generations.
-- Each bird is controlled by a genome that encodes genetic information about the neural network’s architecture, connection weights, and parameters.
-- At the start of every new round of the game, a feed-forward neural network (phenotype) is created for each bird using its genome (genotype) as blueprint.
-- Fitness evaluation is based on how far a bird progresses in the game.
-- Automatic mutation or/and breeding of disparate neural network topologies to create the next generation of birds with more complex network architecture.
-- The ultimate best-performing genome is saved as a pickle file for later use.
-- Real-time visualization of evolving bird gameplay.
+- Utilizes the **NEAT algorithm** to evolve a population of birds through successive generations.
+- Each bird is controlled by a **genome** that encodes genetic information about the neural network’s architecture, connection weights, and parameters.
+- At the start of every new round of the game, a **feed-forward neural network (phenotype)** is created for each bird using its genome (genotype) as blueprint.
+- **Fitness evaluation** is based on how far a bird progresses in the game.
+- Automatic **mutation** or/and **crossover of disparate neural network topologies** to create the next generation of birds with more complex network architecture.
+- The ultimate **best-performing genome** is saved as a pickle file for later use.
+- **Real-time visualization** of evolving bird gameplay.
 
 <br/>
 
