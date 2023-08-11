@@ -19,7 +19,7 @@ Genetic algorithm: NEAT (NeuroEvolution of Augmenting Topologies)
   2) output (1 neuron): Jump?
   3) Activation function = tanh (output value will be between -1 and 1)
   4) population size each generation: 100
-  5) fitness function: how each bird's performance is evaluated
+  5) fitness function: eval_genome(). Evaluates each genome's performance.
   6) max generation: 30
   7) fitness threshold: 1000
 
