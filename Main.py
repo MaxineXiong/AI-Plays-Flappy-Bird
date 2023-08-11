@@ -21,6 +21,12 @@ Genetic algorithm: NEAT (NeuroEvolution of Augmenting Topologies)
   4) population size each generation: 100 (adjustable)
   5) fitness function: how we assess the birds' performance (i.e. how we score the birds)
   6) max generation: 30
+
+
+@software{McIntyre_neat-python,
+author = {McIntyre, Alan and Kallada, Matt and Miguel, Cesar G. and Feher de Silva, Carolina and Netto, Marcio Lobo},
+title = {{neat-python}}
+}
 """
 
 
