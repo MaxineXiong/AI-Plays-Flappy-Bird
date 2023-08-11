@@ -11,16 +11,17 @@ Genetic algorithm: NEAT (NeuroEvolution of Augmenting Topologies)
 - inspired by natural selection
 - a process of generations continually learning and getting better (evolved) until eventually they can get as good as they can (become unbeatable)
 - 1) create a population: each population consists of eg. 100 birds. Each bird has a neutral network controlling it
-  2) we test each neutral network and evaluate their fitness
+  2) test each neutral network and evaluate their fitness
   3) When all birds in a generation die, get rid of the other poorly-performing birds, mutate and breed (i.e. cross over disparate topologies) the best-performing birds in the last population to create a new population -> more nodes and connection genes will be added to bird's neural network and the architecture will get more complex
 
 - Important Attributes of neural network:
   1) Inputs (3 neurons): bird.y, distance between bird.y and top_pipe, distance between bird.y and bottom_pipe
   2) output (1 neuron): Jump?
   3) Activation function = tanh (output value will be between -1 and 1)
-  4) population size each generation: 100 (adjustable)
-  5) fitness function: how we assess the birds' performance (i.e. how we score the birds)
+  4) population size each generation: 100
+  5) fitness function: how each bird's performance is evaluated
   6) max generation: 30
+  7) fitness threshold: 1000
 
 
 @software{McIntyre_neat-python,
