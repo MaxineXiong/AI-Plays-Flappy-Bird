@@ -72,7 +72,9 @@ class NeatApp:
         self.p.add_reporter(neat.StdOutReporter(True))  # show_species_details = True
         self.p.add_reporter(neat.StatisticsReporter())
 
-        # Run the fitness function eval_genomes() for up to MAX_GENS generations
+        # Evolve genomes and call the fitness evaluation function eval_genomes() for up to MAX_GENS generations.
+        # Once the fitness threshold has been met or exceeded, the "p" object will terminate the evolution process,
+        # and stop calling the evaluation function again.
         winner = self.p.run(self.eval_genomes, self.MAX_GENS)
 
         # Show stats for the winner genome in the terminal
@@ -100,12 +102,12 @@ class NeatApp:
         self.nets = []
         self.birds = []
         for g_id, g in genomes:
-            # Initialise the fitness score of each genome to 0
+            # Set the initial fitness score of each genome to 0
             g.fitness = 0
-            # Add each updated genome to the 'gns' list
+            # Add each genome to the 'gns' list
             self.gns.append(g)
 
-            # Create a feed-forward neural network for each genome
+            # Create a feed-forward neural network (phenotype) for each bird using their genome as blueprint
             net = neat.nn.FeedForwardNetwork.create(g, config)
             # Add each neural network to the 'nets' list
             self.nets.append(net)
@@ -165,9 +167,15 @@ class NeatApp:
                 self.draw_all()
 
 
+                # If the player's score exceeds 200, terminate the game
+                if self.score > 200:
+                    running = False
+
+
             else:
-                # If all birds are extinct, break the loop.
-                # The population object "p" will recall the eval_genomes() function to run with the next generation
+                # If all birds are extinct, terminate the evaluation.
+                # The population object "p" will evolve the genomes and recall the eval_genomes() function
+                # to start evaluating the next generation if the fitness threshold is not met.
                 running = False
 
 
@@ -210,7 +218,7 @@ class NeatApp:
         output = net.activate( (
                                  bird.y,
                                  abs(bird.y - upcoming_pipe.top_height),
-                                 abs(bird.y + bird.img.get_height() - upcoming_pipe.bottom_y)
+                                 abs(bird.y - upcoming_pipe.bottom_y)
                                 ) )[0]
         if output > 0.5:
             # Make the bird jump if the output value is higher than 0.5
@@ -359,16 +367,20 @@ class NeatApp:
         """
         Method to load the winner genome from a saved pickle file, and play the game using the best bird (genome)
         """
-        # Unpickle the saved winner genome
-        with open(genome_path, 'rb') as f:
-            genome = pickle.load(f)
+        # Check if the file path exists
+        if os.path.exists(genome_path):
+            # Unpickle the saved winner genome
+            with open(genome_path, 'rb') as f:
+                genome = pickle.load(f)
 
-        # Convert loaded genome into required data structure
-        genomes = [(1, genome)]
+            # Convert loaded genome into required data structure
+            genomes = [(1, genome)]
 
-        # Call the eval_genomes() method with only the loaded genome
-        self.eval_genomes(genomes, self.config)
+            # Call the eval_genomes() method with only the loaded genome
+            self.eval_genomes(genomes, self.config)
 
+        else:
+            print('ERROR: The provided genome path could not be found. Please try again.')
 
 
 
@@ -382,8 +394,5 @@ if __name__ == '__main__':
     # Run successive generations to evolve and evaluate 100 birds (genomes) at a time, and save the winner genome in the end
     app.run()
 
-    # Play the game with only the winner bird
-    genome_path = 'winner.pkl'
-    if os.path.exists(genome_path):
-        # If the file path exists, load the winner genome, and play the game using the best genome only
-        app.play_with_best_bird(genome_path)
+    # Load the winner genome, and play the game using the best bird only
+    app.play_with_best_bird('winner.pkl')
