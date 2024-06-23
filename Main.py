@@ -8,25 +8,34 @@ import os
 
 """
 Genetic algorithm: NEAT (NeuroEvolution of Augmenting Topologies)
-- inspired by natural selection
-- a process of generations continually learning and getting better (evolved) until eventually they can get as good as they can (become unbeatable)
-- 1) create a population: each population consists of eg. 100 birds. Each bird has a neutral network controlling it
-  2) test each neutral network and evaluate their fitness
-  3) When all birds in a generation die, get rid of the other poorly-performing birds, mutate and breed (i.e. cross over disparate topologies) the best-performing birds in the last population to create a new population -> more nodes and connection genes will be added to bird's neural network and the architecture will get more complex
+- inspired by natural selection.
+- a process of generations continually learning and getting better (evolved)
+until eventually they can get as good as they can (become unbeatable).
+- 1) create a population: each population consists of eg. 100 birds. Each bird
+has a neutral network controlling it.
+  2) test each neutral network and evaluate their fitness.
+  3) When all birds in a generation die, get rid of the other poorly-performing
+  birds, mutate and breed (i.e. cross over disparate topologies) the
+  best-performing birds in the last population to create a new population
+  -> more nodes and connection genes will be added to bird's neural network and
+  the architecture will get more complex.
 
 - Important Attributes of neural network:
-  1) Inputs (3 neurons): bird.y, distance between bird.y and top_pipe, distance between bird.y and bottom_pipe
+  1) Inputs (3 neurons): bird.y, distance between bird.y and top_pipe, distance
+  between bird.y and bottom_pipe.
   2) output (1 neuron): Jump?
-  3) Activation function = tanh (output value will be between -1 and 1)
+  3) Activation function = tanh (output value will be between -1 and 1).
   4) population size each generation: 100
   5) fitness function: eval_genome(). Evaluates each genome's performance.
   6) max generation: 30
   7) fitness threshold: 1000
 
 
-@software{McIntyre_neat-python,
-author = {McIntyre, Alan and Kallada, Matt and Miguel, Cesar G. and Feher de Silva, Carolina and Netto, Marcio Lobo},
-title = {{neat-python}}
+@software{
+    McIntyre_neat-python,
+    author = {McIntyre, Alan and Kallada, Matt and Miguel, Cesar G. and
+              Feher de Silva, Carolina and Netto, Marcio Lobo},
+    title = {{neat-python}},
 }
 """
 
@@ -78,12 +87,15 @@ class NeatApp:
         birds (genomes) through successive generations.
         """
         # Show statistics in terminal
-        self.p.add_reporter(neat.StdOutReporter(True))  # show_species_details = True
+        self.p.add_reporter(neat.StdOutReporter(True)) # show_species_details = True
         self.p.add_reporter(neat.StatisticsReporter())
 
-        # Evolve genomes and call the fitness evaluation function eval_genomes() for up to MAX_GENS generations.
-        # Once the fitness threshold has been met or exceeded, the "p" object will terminate the evolution process,
-        # and stop calling the evaluation function again.
+        # The population object "p" evolves genomes and calls the fitness...
+        # ...function eval_genomes() to evaluate genomes successively for up...
+        # ...to MAX_GENS generations. If the fitness threshold has been met...
+        # ...or exceeded in the latest evaluation process, the 'p' object ...
+        # ...will stop further evolving the genomes and no more evaluation ...
+        # ...will occur.
         winner = self.p.run(self.eval_genomes, self.MAX_GENS)
 
         # Show stats for the winner genome in the terminal
@@ -100,12 +112,14 @@ class NeatApp:
         of each genome (bird) in the population based on how far they
         progress in the game.
         """
-        # Increment gen_count by 1 everytime the eval_genomes() function is called
+        # Increment gen_count by 1 everytime eval_genomes() function is called
         self.gen_count += 1
-        # Reset the player's score back to 0 everytime the eval_genomes() function is run with a new generation
+        # Reset the player's score back to 0 everytime the eval_genomes() ...
+        # ...function is run with a new generation
         self.score = 0
 
-        # Create the three lists to store genomes, neural networks, and bird objects for each genome in the current generation
+        # Create the three lists to store genomes, neural networks, and ...
+        # ...bird objects for each genome in the current generation
         self.gns = []
         self.nets = []
         self.birds = []
@@ -115,12 +129,14 @@ class NeatApp:
             # Add each genome to the 'gns' list
             self.gns.append(g)
 
-            # Create a feed-forward neural network (phenotype) for each bird using their genome as blueprint
+            # Create a feed-forward neural network (phenotype) for each ...
+            # ...bird using their genome as blueprint
             net = neat.nn.FeedForwardNetwork.create(g, config)
             # Add each neural network to the 'nets' list
             self.nets.append(net)
 
-            # Create and store the bird object for each genome, all starting at the same position on the pygame window
+            # Create and store the bird object for each genome, all ...
+            # ...starting at the same position on the pygame window
             self.birds.append(Bird(230, 350))
 
         # Initialise a new round of the game
@@ -141,25 +157,29 @@ class NeatApp:
                 ):
                     # ...take the second pipe as the upcoming pipe
                     upcoming_pipe_id = 1
-                # Get the pipe object that the birds are flying towards or passing through
+                # Get the pipe object that the birds are flying towards or ...
+                # ...passing through
                 upcoming_pipe = self.pipes[upcoming_pipe_id]
 
-                # Iterate through each bird's genome, neural network, and bird object
+                # Iterate through each bird's genome, neural network, and ...
+                # ...bird object
                 for i in range(len(self.birds)):
-                    # Increment the fitness score of each genome by 0.1 per frame
+                    # Increment fitness score of each genome by 0.1 per frame
                     self.gns[i].fitness += 0.1
 
                     # Make each bird move
                     self.birds[i].move()
 
-                    # Determine whether the bird should jump or not to avoid hitting the upcoming pipe
-                    self.get_bird_jump(
+                    # Determine whether the bird should jump or not to ...
+                    # ...avoid hitting the upcoming pipe
+                    self.evaluate_bird_jump(
                         net=self.nets[i],
                         bird=self.birds[i],
                         upcoming_pipe=upcoming_pipe,
                     )
 
-                # Eliminate the birds that have collided with either the pipes, ceiling, or base floor
+                # Eliminate the birds that have collided with either the ...
+                # ...pipes, ceiling, or base floor
                 self.remove_colliding_birds()
 
                 # Make all the pipes move and update the 'pipes' list accordingly
@@ -180,8 +200,6 @@ class NeatApp:
 
             else:
                 # If all birds are extinct, terminate the evaluation.
-                # The population object "p" will evolve the genomes and recall the eval_genomes() function
-                # to start evaluating the next generation if the fitness threshold is not met.
                 running = False
 
             # If the button "X" is clicked
@@ -213,11 +231,12 @@ class NeatApp:
         self.pipes = [Pipe(700)]
 
 
-    def get_bird_jump(self, net, bird, upcoming_pipe):
+    def evaluate_bird_jump(self, net, bird, upcoming_pipe):
         """Method to determine whether a bird should jump or not based on the
         output value of its neural network
         """
-        # Feed the three inputs into the target bird's neural network to get an output value that falls within a range of -1 to 1
+        # Feed the three inputs into the target bird's neural network to ...
+        # ...get an output value that falls within a range of -1 to 1
         output = net.activate(
             (
                 bird.y,
@@ -236,7 +255,8 @@ class NeatApp:
         """
         # Eliminate the birds that have collided with any of the pipes
         for pipe in self.pipes:
-            # Capture the birds that have collided with either the top or bottom pipe
+            # Capture the birds that have collided with either the top ...
+            # ...or bottom pipe
             birds_to_remove = []
             for bird in self.birds:
                 if pipe.collide(bird):
@@ -248,7 +268,10 @@ class NeatApp:
         # Capture the colliding birds
         birds_to_remove = []
         for bird in self.birds:
-            if (bird.y <= 0) or ((bird.y + bird.img.get_height()) >= self.base.y):
+            if (
+                bird.y <= 0 or
+                (bird.y + bird.img.get_height()) >= self.base.y
+            ):
                 birds_to_remove.append(bird)
         # Remove all the colliding birds from the game
         self.eliminate_birds(birds_to_remove)
@@ -264,7 +287,8 @@ class NeatApp:
             for b in birds_to_remove:
                 # Get the index of the current bird in the 'birds' list
                 b_id = self.birds.index(b)
-                # Remove the genome, neural network, and bird object associated with the current bird from the three lists
+                # Remove the genome, neural network, and bird object ...
+                # ...associated with the current bird from the three lists
                 self.gns.pop(b_id)
                 self.nets.pop(b_id)
                 self.birds.pop(b_id)
@@ -273,25 +297,35 @@ class NeatApp:
     def update_pipes(self):
         """Method that makes the pipes move and updates pipes in the game.
         """
-        # Initialise the boolean variable as False, which will track whether a new pipe needs to be added
+        # Initialise the boolean variable as False, which will track ...
+        # ...whether a new pipe needs to be added
         add_pipe = False
-        # Initialise the list variable as an empty list, which will store pipes that need to be removed
+        # Initialise the list variable as an empty list, which will store ...
+        # ...pipes that need to be removed
         pipes_to_remove = []
 
         # Check if there are still birds alive in the current generation
         if self.birds:
             # Iterate through each pipe in the 'pipes' list
             for pipe in self.pipes:
-                # Check if the current pipe has just been flown through by the birds
-                if (not pipe.passed) and (pipe.x + pipe.WIDTH < self.birds[0].x):
-                    # If so, mark it as "passed", and set 'add_pipe' to True to indicate that a new pipe needs to be added to the 'pipes' list
+                # Check if the current pipe has just been flown through ...
+                # ...by the birds
+                if (
+                    not pipe.passed and
+                    (pipe.x + pipe.WIDTH < self.birds[0].x)
+                ):
+                    # If so, mark it as "passed", and set 'add_pipe' to ...
+                    # ...True to indicate that a new pipe needs to be added ...
+                    # ...to the 'pipes' list
                     pipe.passed = True
                     add_pipe = True
 
                 # Make the current pipe move
-                # Check if the current pipe has moved completely off the screen to the left
+                # Check if the current pipe has moved completely off the ...
+                # ...screen to the left
                 if pipe.x + pipe.WIDTH < 0:
-                    # If so, move the pipe first, then add it to the 'pipes_to_remove' list for deletion
+                    # If so, move the pipe first, then add it to the ...
+                    # ...'pipes_to_remove' list for deletion
                     pipe.move()
                     pipes_to_remove.append(pipe)
                 else:
@@ -303,15 +337,18 @@ class NeatApp:
         if add_pipe:
             # If so, increment the player's score by 1
             self.score += 1
-            # Add a new pipe to the 'pipes' list that will be placed at a position of 550 pixels on the right side of the window
+            # Add a new pipe to the 'pipes' list that will be placed at a ...
+            # ...position of 550 pixels on the right side of the window
             self.pipes.append(Pipe(550))
             # Reward each genome with 5 more fitness score points
             for g in self.gns:
                 g.fitness += 5
 
-        # Check if there are any pipes in the 'pipes_to_remove' list that need to be deleted
+        # Check if there are any pipes in the 'pipes_to_remove' list that ...
+        # ...need to be deleted
         if pipes_to_remove:
-            # If so, loop through each pipe in 'pipes_to_remove' and remove them from the 'pipes' list
+            # If so, loop through each pipe in 'pipes_to_remove' and remove ...
+            # ...them from the 'pipes' list
             for p in pipes_to_remove:
                 self.pipes.remove(p)
 
@@ -320,8 +357,11 @@ class NeatApp:
         """Method to draw all game elements, including birds, pipes, base
         floor, and indicator texts, onto the pygame window.
         """
-        # Load the background image from a file source as a surface object, and double its original size
-        bg_img = pygame.transform.scale2x(pygame.image.load("./images/bg.png"))
+        # Load the background image from a file source as a surface ...
+        # ...object, and double its original size
+        bg_img = pygame.transform.scale2x(
+            pygame.image.load("./images/bg.png")
+        )
         # Draw background image onto the pygame window
         self.win.blit(bg_img, (0, 0))
 
@@ -395,7 +435,7 @@ if __name__ == "__main__":
 
     # Run successive generations to evolve and evaluate 100 birds ...
     # ...(genomes) at a time, and save the winner genome in the end
-    app.run()
+    # app.run()
 
     # Load the winner genome, and play the game using the best bird only
     app.play_with_best_bird("winner.pkl")
