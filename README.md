@@ -55,6 +55,7 @@ AI-Plays-Flappy-Bird-with-NEAT/
 ├── images/
 │   └── *.png
 ├── requirements.txt
+├── .gitignore
 ├── README.md
 └── LICENSE
 ```
@@ -66,6 +67,7 @@ AI-Plays-Flappy-Bird-with-NEAT/
 - **winner.pkl**: As the output of executing the **Main.py** program, this pickle file stores the robust genome of the winning bird that has surpassed the fitness threshold. This file enables users to load and relive the remarkable gaming experience achieved by the evolved artificial intelligence.
 - **images/**: This folder houses all the images used in the game, such as three bird images, a background image, a pipe image, and a base floor image. These images together contribute to the game's visual appeal and create an engaging environment.
 - **requirements.txt**: This file lists the necessary dependencies and packages required to run the program. It provides a convenient way to install all the dependencies.
+- **.gitignore**: Specifies which files and directories Git should ignore, helping to keep the repository clean from unnecessary or sensitive files.
 - **README.md**: The README file for the project. It provides a comprehensive overview of the project's objectives, functionalities, structure, and usage instructions.
 - **LICENSE**: The license file for the project.
 
