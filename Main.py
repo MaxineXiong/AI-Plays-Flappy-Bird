@@ -435,7 +435,7 @@ if __name__ == "__main__":
 
     # Run successive generations to evolve and evaluate 100 birds ...
     # ...(genomes) at a time, and save the winner genome in the end
-    # app.run()
+    app.run()
 
     # Load the winner genome, and play the game using the best bird only
     app.play_with_best_bird("winner.pkl")
