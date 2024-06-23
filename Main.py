@@ -1,5 +1,5 @@
-from BIRD_pygame import BIRD
-from BASE_PIPE_pygame import BASE, PIPE
+from Bird_pygame import Bird
+from Base_Pipe_pygame import Base, Pipe
 import pygame
 import neat
 import pickle
@@ -32,9 +32,8 @@ title = {{neat-python}}
 
 
 class NeatApp:
-    """
-    Class for the NEAT app that implements the NEAT algorithm
-    to train and evolve a population of birds in a Flappy Bird-like game.
+    """Class for the NEAT app that implements the NEAT algorithm to train
+    and evolve a population of birds in a Flappy Bird-like game.
     """
 
     # Set the width and height of pygame window
@@ -45,16 +44,21 @@ class NeatApp:
     # The fitness function eval_genomes() will be called for up to 30 generations
     MAX_GENS = 30
 
-
-
     def __init__(self, config_path):
+        """Initialize the 'NeatApp' object with a given path to the
+        configuration file.
+        Args:
+        - config_path: The path to the configuration file.
         """
-        Initialize the 'NeatApp' object with a given path to the configuration file.
-        """
-
         self.config_path = config_path
         # Load the required NEAT config from the config file
-        self.config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction, neat.DefaultSpeciesSet, neat.DefaultStagnation, self.config_path)
+        self.config = neat.config.Config(
+            neat.DefaultGenome,
+            neat.DefaultReproduction,
+            neat.DefaultSpeciesSet,
+            neat.DefaultStagnation,
+            self.config_path,
+        )
         # Create a population object that implements the core evolution algorithm:
         # 1. Evaluate the fitness of all genomes
         # 2. Check to see if the termination criterion is satisfied; exit if it is
@@ -69,12 +73,10 @@ class NeatApp:
         self.score = 0
 
 
-
     def run(self):
+        """Method to run the NEAT algorithm to evolve and evaluate the
+        birds (genomes) through successive generations.
         """
-        Method to run the NEAT algorithm to evolve and evaluate the birds (genomes) through successive generations.
-        """
-
         # Show statistics in terminal
         self.p.add_reporter(neat.StdOutReporter(True))  # show_species_details = True
         self.p.add_reporter(neat.StatisticsReporter())
@@ -85,20 +87,19 @@ class NeatApp:
         winner = self.p.run(self.eval_genomes, self.MAX_GENS)
 
         # Show stats for the winner genome in the terminal
-        print('\nBest genome:\n{!s}'.format(winner))
+        print("\nBest genome:\n{!s}".format(winner))
 
         # Save the winner genome to a pkl file
-        with open('winner.pkl', 'wb') as f:
+        with open("winner.pkl", "wb") as f:
             pickle.dump(winner, f)
 
 
-
     def eval_genomes(self, genomes, config):
+        """The fitness function that simulates the current population of
+        birds attempting to fly through the pipes, and evaluates the fitness
+        of each genome (bird) in the population based on how far they
+        progress in the game.
         """
-        The fitness function that simulates the current population of birds attempting to fly through the pipes,
-        and evaluates the fitness of each genome (bird) in the population based on how far they progress in the game.
-        """
-
         # Increment gen_count by 1 everytime the eval_genomes() function is called
         self.gen_count += 1
         # Reset the player's score back to 0 everytime the eval_genomes() function is run with a new generation
@@ -120,12 +121,10 @@ class NeatApp:
             self.nets.append(net)
 
             # Create and store the bird object for each genome, all starting at the same position on the pygame window
-            self.birds.append(BIRD(230, 350))
-
+            self.birds.append(Bird(230, 350))
 
         # Initialise a new round of the game
         self.init_game()
-
 
         running = True
         while running:
@@ -133,11 +132,13 @@ class NeatApp:
             self.clock.tick(self.FRAMES_PER_SECOND)
 
             # Check if there are still birds alive in the current generation
-            if len(self.birds) > 0:
+            if self.birds:
                 # Take the first pipe as the upcoming pipe
                 upcoming_pipe_id = 0
                 # If the birds are between two pipes...
-                if (len(self.pipes) > 1) and ( (self.pipes[0].x + self.pipes[0].WIDTH) < self.birds[0].x ):
+                if (len(self.pipes) > 1) and (
+                    (self.pipes[0].x + self.pipes[0].WIDTH) < self.birds[0].x
+                ):
                     # ...take the second pipe as the upcoming pipe
                     upcoming_pipe_id = 1
                 # Get the pipe object that the birds are flying towards or passing through
@@ -152,39 +153,36 @@ class NeatApp:
                     self.birds[i].move()
 
                     # Determine whether the bird should jump or not to avoid hitting the upcoming pipe
-                    self.bird_jump(self.nets[i], self.birds[i], upcoming_pipe)
+                    self.get_bird_jump(
+                        net=self.nets[i],
+                        bird=self.birds[i],
+                        upcoming_pipe=upcoming_pipe,
+                    )
 
                 # Eliminate the birds that have collided with either the pipes, ceiling, or base floor
                 self.remove_colliding_birds()
 
-
                 # Make all the pipes move and update the 'pipes' list accordingly
                 self.update_pipes()
-
 
                 # Make the base floor move
                 self.base.move()
 
-
                 # Get the number of birds alive
                 self.num_lives = len(self.birds)
-
 
                 # Draw all elements onto the pygame window
                 self.draw_all()
 
-
                 # If the player's score exceeds 200, terminate the game
                 if self.score > 200:
                     running = False
-
 
             else:
                 # If all birds are extinct, terminate the evaluation.
                 # The population object "p" will evolve the genomes and recall the eval_genomes() function
                 # to start evaluating the next generation if the fitness threshold is not met.
                 running = False
-
 
             # If the button "X" is clicked
             for event in pygame.event.get():
@@ -195,10 +193,9 @@ class NeatApp:
                     quit()
 
 
-
     def init_game(self):
-        """
-        Method to initialise the game environment and objects required to start a new round of game
+        """Method to initialise the game environment and objects required
+        to start a new round of game.
         """
         # Create pygame window object
         self.win = pygame.display.set_mode((self.WIN_WIDTH, self.WIN_HEIGHT))
@@ -212,33 +209,31 @@ class NeatApp:
         self.clock = pygame.time.Clock()
 
         # Initialise the 'base' object and 'pipes' list
-        self.base = BASE(700)
-        self.pipes = [PIPE(700)]
+        self.base = Base(700)
+        self.pipes = [Pipe(700)]
 
 
-
-    def bird_jump(self, net, bird, upcoming_pipe):
-        """
-        Method to determine whether a bird should jump or not based on the output value of its neural network
+    def get_bird_jump(self, net, bird, upcoming_pipe):
+        """Method to determine whether a bird should jump or not based on the
+        output value of its neural network
         """
         # Feed the three inputs into the target bird's neural network to get an output value that falls within a range of -1 to 1
-        output = net.activate( (
-                                 bird.y,
-                                 abs(bird.y - upcoming_pipe.top_height),
-                                 abs(bird.y - upcoming_pipe.bottom_y)
-                                ) )[0]
+        output = net.activate(
+            (
+                bird.y,
+                abs(bird.y - upcoming_pipe.top_height),
+                abs(bird.y - upcoming_pipe.bottom_y),
+            )
+        )[0]
         if output > 0.5:
             # Make the bird jump if the output value is higher than 0.5
             bird.jump()
 
 
-
     def remove_colliding_birds(self):
+        """Method to identify and eliminate the birds that have collided
+        with obstacles in the game, such as pipes, ceiling, or base floor.
         """
-        Method to identify and eliminate the birds that have collided with obstacles in the game,
-        such as pipes, ceiling, or base floor.
-        """
-
         # Eliminate the birds that have collided with any of the pipes
         for pipe in self.pipes:
             # Capture the birds that have collided with either the top or bottom pipe
@@ -259,13 +254,12 @@ class NeatApp:
         self.eliminate_birds(birds_to_remove)
 
 
-
     def eliminate_birds(self, birds_to_remove):
-        """
-        Method to remove the genomes, neural netowrks, and bird objects of the target birds from the three lists
+        """Method to remove the genomes, neural netowrks, and bird objects of
+        the target birds from the three lists.
         """
         # Check if there are any birds to remove
-        if len(birds_to_remove) > 0:
+        if birds_to_remove:
             # Iterate through each bird to remove
             for b in birds_to_remove:
                 # Get the index of the current bird in the 'birds' list
@@ -276,23 +270,20 @@ class NeatApp:
                 self.birds.pop(b_id)
 
 
-
     def update_pipes(self):
+        """Method that makes the pipes move and updates pipes in the game.
         """
-        Method that makes the pipes move and updates pipes in the game
-        """
-
         # Initialise the boolean variable as False, which will track whether a new pipe needs to be added
         add_pipe = False
         # Initialise the list variable as an empty list, which will store pipes that need to be removed
         pipes_to_remove = []
 
         # Check if there are still birds alive in the current generation
-        if len(self.birds) > 0:
+        if self.birds:
             # Iterate through each pipe in the 'pipes' list
             for pipe in self.pipes:
                 # Check if the current pipe has just been flown through by the birds
-                if (pipe.passed == False) and (pipe.x + pipe.WIDTH < self.birds[0].x):
+                if (not pipe.passed) and (pipe.x + pipe.WIDTH < self.birds[0].x):
                     # If so, mark it as "passed", and set 'add_pipe' to True to indicate that a new pipe needs to be added to the 'pipes' list
                     pipe.passed = True
                     add_pipe = True
@@ -313,24 +304,22 @@ class NeatApp:
             # If so, increment the player's score by 1
             self.score += 1
             # Add a new pipe to the 'pipes' list that will be placed at a position of 550 pixels on the right side of the window
-            self.pipes.append(PIPE(550))
+            self.pipes.append(Pipe(550))
             # Reward each genome with 5 more fitness score points
             for g in self.gns:
                 g.fitness += 5
 
         # Check if there are any pipes in the 'pipes_to_remove' list that need to be deleted
-        if len(pipes_to_remove) > 0:
+        if pipes_to_remove:
             # If so, loop through each pipe in 'pipes_to_remove' and remove them from the 'pipes' list
             for p in pipes_to_remove:
                 self.pipes.remove(p)
 
 
-
     def draw_all(self):
+        """Method to draw all game elements, including birds, pipes, base
+        floor, and indicator texts, onto the pygame window.
         """
-        Method to draw all game elements, including birds, pipes, base floor, and indicator texts, onto the pygame window
-        """
-
         # Load the background image from a file source as a surface object, and double its original size
         bg_img = pygame.transform.scale2x(pygame.image.load("./images/bg.png"))
         # Draw background image onto the pygame window
@@ -348,36 +337,40 @@ class NeatApp:
             bird.draw(self.win)
 
         # Display the current score as text on the pygame window
-        score_text = self.text_font.render("Score: " + str(self.score),
-                                            True,                 # antialisa = True: Characters will have smooth edges
-                                            (255, 255, 255))      # white text color
-        self.win.blit(score_text, (self.WIN_WIDTH - 15 - score_text.get_width(), 15))
+        score_text = self.text_font.render(
+            "Score: " + str(self.score),
+            True, # antialisa = True: Characters will have smooth edges
+            (255, 255, 255), # white text color
+        )
+        self.win.blit(
+            score_text,
+            (self.WIN_WIDTH - 15 - score_text.get_width(), 15)
+        )
 
         # Display the generation count as text on the pygame window.
-        gen_text = self.text_font.render("Gens: " + str(self.gen_count),
-                                          True,
-                                          (255, 255, 255))
+        gen_text = self.text_font.render(
+            "Gens: " + str(self.gen_count), True, (255, 255, 255)
+        )
         self.win.blit(gen_text, (15, 15))
 
         # Display the number of birds alive as text on the pygame window
-        alive_text = self.text_font.render("Alive: " + str(self.num_lives),
-                                            True,
-                                            (255, 255, 255))
+        alive_text = self.text_font.render(
+            "Alive: " + str(self.num_lives), True, (255, 255, 255)
+        )
         self.win.blit(alive_text, (15, 15 + gen_text.get_height() + 10))
 
         # Display the pygame surface on user's monitor
         pygame.display.update()
 
 
-
     def play_with_best_bird(self, genome_path):
-        """
-        Method to load the winner genome from a saved pickle file, and play the game using the best bird (genome)
+        """Method to load the winner genome from a saved pickle file, and play
+        the game using the best bird (genome).
         """
         # Check if the file path exists
         if os.path.exists(genome_path):
             # Unpickle the saved winner genome
-            with open(genome_path, 'rb') as f:
+            with open(genome_path, "rb") as f:
                 genome = pickle.load(f)
 
             # Convert loaded genome into required data structure
@@ -387,19 +380,22 @@ class NeatApp:
             self.eval_genomes(genomes, self.config)
 
         else:
-            print('ERROR: The provided genome path could not be found. Please try again.')
+            print(
+                "ERROR: The provided genome path could not be found. "
+                "Please try again."
+            )
 
 
 
+# Check if this script is being run directly (and not imported as a module)
+if __name__ == "__main__":
+    # Create an instance of the 'NeatApp' class with the specified ...
+    # ...configuration file path
+    app = NeatApp("./config-feedforward.txt")
 
-
-# Check if the script is being run directly as the main program
-if __name__ == '__main__':
-    # Create an instance of the 'NeatApp' class with the specified configuration file path
-    app = NeatApp('./config-feedforward.txt')
-
-    # Run successive generations to evolve and evaluate 100 birds (genomes) at a time, and save the winner genome in the end
+    # Run successive generations to evolve and evaluate 100 birds ...
+    # ...(genomes) at a time, and save the winner genome in the end
     app.run()
 
     # Load the winner genome, and play the game using the best bird only
-    app.play_with_best_bird('winner.pkl')
+    app.play_with_best_bird("winner.pkl")
